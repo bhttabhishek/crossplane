@@ -8,10 +8,10 @@ spec:
   names:
     kind: CompositeEKSCluster
     plural: compositeeksclusters
+  scope: Namespaced  # Changed from Cluster to Namespaced
   claimNames:
     kind: EKSCluster
     plural: eksclusters
-  scope: Cluster
   versions:
     - name: v1alpha1
       served: true
