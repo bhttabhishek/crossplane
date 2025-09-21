@@ -1,0 +1,46 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: compositeeksclusters.aws.example.org
+spec:
+  group: aws.example.org
+  names:
+    kind: CompositeEKSCluster
+    plural: compositeeksclusters
+  claimNames:
+    kind: EKSCluster
+    plural: eksclusters
+  scope: Cluster
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                parameters:
+                  type: object
+                  properties:
+                    region:
+                      type: string
+                    version:
+                      type: string
+                    subnetIds:
+                      type: array
+                      items:
+                        type: string
+                    securityGroupIds:
+                      type: array
+                      items:
+                        type: string
+                    platformMinSize:
+                      type: integer
+                      default: 1
+                    appMinSize:
+                      type: integer
+                      default: 1
