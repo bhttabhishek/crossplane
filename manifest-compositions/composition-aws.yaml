@@ -6,15 +6,16 @@ spec:
   compositeTypeRef:
     apiVersion: aws.example.org/v1alpha1
     kind: CompositeEKSCluster
+  mode: Pipeline
   pipeline:
 
     # ----------------------------
     # Step 1: Cluster IAM Role
     # ----------------------------
     - name: create-cluster-role
+      step: create-cluster-role
       functionRef:
         name: createCompositeResource
-      step: create-cluster-role
       arguments:
         resources:
           - name: eks-cluster-role
@@ -38,7 +39,6 @@ spec:
                     }
                 providerConfigRef:
                   name: aws-provider
-
           - name: eks-cluster-policy
             base:
               apiVersion: iam.aws.crossplane.io/v1beta1
@@ -50,7 +50,6 @@ spec:
                     matchControllerRef: true
                 providerConfigRef:
                   name: aws-provider
-
           - name: eks-vpc-policy
             base:
               apiVersion: iam.aws.crossplane.io/v1beta1
@@ -67,9 +66,9 @@ spec:
     # Step 2: NodeGroup IAM Role
     # ----------------------------
     - name: create-nodegroup-role
+      step: create-nodegroup-role
       functionRef:
         name: createCompositeResource
-      step: create-nodegroup-role
       arguments:
         resources:
           - name: eks-nodegroup-role
@@ -93,7 +92,6 @@ spec:
                     }
                 providerConfigRef:
                   name: aws-provider
-
           - name: nodegroup-worker-policy
             base:
               apiVersion: iam.aws.crossplane.io/v1beta1
@@ -105,7 +103,6 @@ spec:
                     matchControllerRef: true
                 providerConfigRef:
                   name: aws-provider
-
           - name: nodegroup-cni-policy
             base:
               apiVersion: iam.aws.crossplane.io/v1beta1
@@ -117,7 +114,6 @@ spec:
                     matchControllerRef: true
                 providerConfigRef:
                   name: aws-provider
-
           - name: nodegroup-ecr-policy
             base:
               apiVersion: iam.aws.crossplane.io/v1beta1
@@ -134,9 +130,9 @@ spec:
     # Step 3: EKS Cluster
     # ----------------------------
     - name: create-eks-cluster
+      step: create-eks-cluster
       functionRef:
         name: createCompositeResource
-      step: create-eks-cluster
       arguments:
         resources:
           - name: eks-cluster
@@ -172,9 +168,9 @@ spec:
     # Step 4: Platform NodeGroup
     # ----------------------------
     - name: create-platform-nodegroup
+      step: create-platform-nodegroup
       functionRef:
         name: createCompositeResource
-      step: create-platform-nodegroup
       arguments:
         resources:
           - name: platform-nodegroup
@@ -208,9 +204,9 @@ spec:
     # Step 5: Application NodeGroup
     # ----------------------------
     - name: create-application-nodegroup
+      step: create-application-nodegroup
       functionRef:
         name: createCompositeResource
-      step: create-application-nodegroup
       arguments:
         resources:
           - name: application-nodegroup
