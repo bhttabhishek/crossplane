@@ -6,200 +6,206 @@ spec:
   compositeTypeRef:
     apiVersion: aws.example.org/v1alpha1
     kind: CompositeEKSCluster
-  pipeline:
-    - name: iam-roles
-      resources:
-        # Cluster IAM Role
-        - name: eks-cluster-role
-          base:
-            apiVersion: iam.aws.crossplane.io/v1beta1
-            kind: Role
-            spec:
-              forProvider:
-                assumeRolePolicyDocument: |
+  resources:
+
+    # ----------------------------
+    # IAM Roles for EKS Cluster
+    # ----------------------------
+    - name: eks-cluster-role
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        spec:
+          forProvider:
+            assumeRolePolicyDocument: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
                   {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                      {
-                        "Effect": "Allow",
-                        "Principal": {
-                          "Service": "eks.amazonaws.com"
-                        },
-                        "Action": "sts:AssumeRole"
-                      }
-                    ]
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "eks.amazonaws.com"
+                    },
+                    "Action": "sts:AssumeRole"
                   }
-              providerConfigRef:
-                name: aws-provider
+                ]
+              }
+          providerConfigRef:
+            name: aws-provider
 
-        # Cluster policies
-        - name: eks-cluster-policy
-          base:
-            apiVersion: iam.aws.crossplane.io/v1beta1
-            kind: RolePolicyAttachment
-            spec:
-              forProvider:
-                policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
-                roleNameSelector:
-                  matchControllerRef: true
-              providerConfigRef:
-                name: aws-provider
+    - name: eks-cluster-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+            roleNameSelector:
+              matchControllerRef: true
+          providerConfigRef:
+            name: aws-provider
 
-        - name: eks-vpc-policy
-          base:
-            apiVersion: iam.aws.crossplane.io/v1beta1
-            kind: RolePolicyAttachment
-            spec:
-              forProvider:
-                policyArn: arn:aws:iam::aws:policy/AmazonEKSVPCResourceController
-                roleNameSelector:
-                  matchControllerRef: true
-              providerConfigRef:
-                name: aws-provider
+    - name: eks-vpc-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKSVPCResourceController
+            roleNameSelector:
+              matchControllerRef: true
+          providerConfigRef:
+            name: aws-provider
 
-        # NodeGroup IAM Role
-        - name: eks-nodegroup-role
-          base:
-            apiVersion: iam.aws.crossplane.io/v1beta1
-            kind: Role
-            spec:
-              forProvider:
-                assumeRolePolicyDocument: |
+    # ----------------------------
+    # IAM Role for NodeGroups
+    # ----------------------------
+    - name: eks-nodegroup-role
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: Role
+        spec:
+          forProvider:
+            assumeRolePolicyDocument: |
+              {
+                "Version": "2012-10-17",
+                "Statement": [
                   {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                      {
-                        "Effect": "Allow",
-                        "Principal": {
-                          "Service": "ec2.amazonaws.com"
-                        },
-                        "Action": "sts:AssumeRole"
-                      }
-                    ]
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "ec2.amazonaws.com"
+                    },
+                    "Action": "sts:AssumeRole"
                   }
-              providerConfigRef:
-                name: aws-provider
+                ]
+              }
+          providerConfigRef:
+            name: aws-provider
 
-        # NodeGroup policies
-        - name: nodegroup-worker-policy
-          base:
-            apiVersion: iam.aws.crossplane.io/v1beta1
-            kind: RolePolicyAttachment
-            spec:
-              forProvider:
-                policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
-                roleNameSelector:
-                  matchControllerRef: true
-              providerConfigRef:
-                name: aws-provider
+    - name: nodegroup-worker-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+            roleNameSelector:
+              matchControllerRef: true
+          providerConfigRef:
+            name: aws-provider
 
-        - name: nodegroup-cni-policy
-          base:
-            apiVersion: iam.aws.crossplane.io/v1beta1
-            kind: RolePolicyAttachment
-            spec:
-              forProvider:
-                policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
-                roleNameSelector:
-                  matchControllerRef: true
-              providerConfigRef:
-                name: aws-provider
+    - name: nodegroup-cni-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+            roleNameSelector:
+              matchControllerRef: true
+          providerConfigRef:
+            name: aws-provider
 
-        - name: nodegroup-ecr-policy
-          base:
-            apiVersion: iam.aws.crossplane.io/v1beta1
-            kind: RolePolicyAttachment
-            spec:
-              forProvider:
-                policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-                roleNameSelector:
-                  matchControllerRef: true
-              providerConfigRef:
-                name: aws-provider
+    - name: nodegroup-ecr-policy
+      base:
+        apiVersion: iam.aws.crossplane.io/v1beta1
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+            roleNameSelector:
+              matchControllerRef: true
+          providerConfigRef:
+            name: aws-provider
 
+    # ----------------------------
+    # EKS Cluster
+    # ----------------------------
     - name: eks-cluster
-      resources:
-        - name: eks-cluster
-          base:
-            apiVersion: eks.aws.crossplane.io/v1beta1
-            kind: Cluster
-            spec:
-              forProvider:
-                region: us-east-1
-                version: "1.30"
-                roleArnSelector:
-                  matchControllerRef: true
-                resourcesVpcConfig:
-                  subnetIds: []
-                  securityGroupIds: []
-              providerConfigRef:
-                name: aws-provider
-          patches:
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.region"
-              toFieldPath: "spec.forProvider.region"
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.version"
-              toFieldPath: "spec.forProvider.version"
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.subnetIds"
-              toFieldPath: "spec.forProvider.resourcesVpcConfig.subnetIds"
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.securityGroupIds"
-              toFieldPath: "spec.forProvider.resourcesVpcConfig.securityGroupIds"
+      base:
+        apiVersion: eks.aws.crossplane.io/v1beta1
+        kind: Cluster
+        spec:
+          forProvider:
+            region: us-east-1
+            version: "1.30"
+            roleArnSelector:
+              matchControllerRef: true
+            resourcesVpcConfig:
+              subnetIds: []
+              securityGroupIds: []
+          providerConfigRef:
+            name: aws-provider
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.region"
+          toFieldPath: "spec.forProvider.region"
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.version"
+          toFieldPath: "spec.forProvider.version"
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.subnetIds"
+          toFieldPath: "spec.forProvider.resourcesVpcConfig.subnetIds"
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.securityGroupIds"
+          toFieldPath: "spec.forProvider.resourcesVpcConfig.securityGroupIds"
 
-    - name: eks-nodegroups
-      resources:
-        - name: platform-nodegroup
-          base:
-            apiVersion: eks.aws.crossplane.io/v1alpha1
-            kind: NodeGroup
-            spec:
-              forProvider:
-                clusterNameSelector:
-                  matchControllerRef: true
-                nodeRoleArnSelector:
-                  matchControllerRef: true
-                scalingConfig:
-                  minSize: 1
-                  maxSize: 5
-                  desiredSize: 1
-                instanceTypes:
-                  - t3.micro
-                subnetIds: []
-              providerConfigRef:
-                name: aws-provider
-          patches:
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.platformMinSize"
-              toFieldPath: "spec.forProvider.scalingConfig.minSize"
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.subnetIds"
-              toFieldPath: "spec.forProvider.subnetIds"
+    # ----------------------------
+    # Platform NodeGroup
+    # ----------------------------
+    - name: platform-nodegroup
+      base:
+        apiVersion: eks.aws.crossplane.io/v1alpha1
+        kind: NodeGroup
+        spec:
+          forProvider:
+            clusterNameSelector:
+              matchControllerRef: true
+            nodeRoleArnSelector:
+              matchControllerRef: true
+            scalingConfig:
+              minSize: 1
+              maxSize: 5
+              desiredSize: 1
+            instanceTypes:
+              - t3.micro
+            subnetIds: []
+          providerConfigRef:
+            name: aws-provider
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.platformMinSize"
+          toFieldPath: "spec.forProvider.scalingConfig.minSize"
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.subnetIds"
+          toFieldPath: "spec.forProvider.subnetIds"
 
-        - name: application-nodegroup
-          base:
-            apiVersion: eks.aws.crossplane.io/v1alpha1
-            kind: NodeGroup
-            spec:
-              forProvider:
-                clusterNameSelector:
-                  matchControllerRef: true
-                nodeRoleArnSelector:
-                  matchControllerRef: true
-                scalingConfig:
-                  minSize: 1
-                  maxSize: 5
-                  desiredSize: 1
-                instanceTypes:
-                  - t3.micro
-                subnetIds: []
-              providerConfigRef:
-                name: aws-provider
-          patches:
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.appMinSize"
-              toFieldPath: "spec.forProvider.scalingConfig.minSize"
-            - type: FromCompositeFieldPath
-              fromFieldPath: "spec.parameters.subnetIds"
-              toFieldPath: "spec.forProvider.subnetIds"
+    # ----------------------------
+    # Application NodeGroup
+    # ----------------------------
+    - name: application-nodegroup
+      base:
+        apiVersion: eks.aws.crossplane.io/v1alpha1
+        kind: NodeGroup
+        spec:
+          forProvider:
+            clusterNameSelector:
+              matchControllerRef: true
+            nodeRoleArnSelector:
+              matchControllerRef: true
+            scalingConfig:
+              minSize: 1
+              maxSize: 5
+              desiredSize: 1
+            instanceTypes:
+              - t3.micro
+            subnetIds: []
+          providerConfigRef:
+            name: aws-provider
+      patches:
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.appMinSize"
+          toFieldPath: "spec.forProvider.scalingConfig.minSize"
+        - type: FromCompositeFieldPath
+          fromFieldPath: "spec.parameters.subnetIds"
+          toFieldPath: "spec.forProvider.subnetIds"
