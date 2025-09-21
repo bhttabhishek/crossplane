@@ -4,6 +4,6 @@ metadata:
   name: provider-aws
 spec:
   package: xpkg.upbound.io/crossplane-contrib/provider-aws:v0.38.0
-  imagePullSecrets:
-    - name: regcred
+  # imagePullSecrets:
+  #   - name: regcred
   packagePullPolicy: Always

@@ -9,4 +9,4 @@ spec:
       namespace: crossplane-system
       name: aws-creds
       key: creds
-  region: ap-southeast-2   # change if needed
+  # region: ap-southeast-2   # change if needed
